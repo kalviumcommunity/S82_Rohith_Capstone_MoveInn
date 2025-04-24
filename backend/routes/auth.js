@@ -7,65 +7,96 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is not defined in environment variables');
+}
+
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Validate request body
   if (!name || !email || !password) {
-    return res.status(400).json({ status: 'error', msg: 'Please provide name, email, and password' });
+    return res.status(400).json({
+      status: 'error',
+      msg: 'Please provide name, email, and password'
+    });
   }
 
   const emailRegex = /\S+@\S+\.\S+/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ status: 'error', msg: 'Invalid email format' });
+    return res.status(400).json({
+      status: 'error',
+      msg: 'Invalid email format'
+    });
   }
 
   if (password.length < 6) {
-    return res.status(400).json({ status: 'error', msg: 'Password must be at least 6 characters long' });
+    return res.status(400).json({
+      status: 'error',
+      msg: 'Password must be at least 6 characters long'
+    });
   }
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ status: 'error', msg: 'User already exists' });
-
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-    
-    // Create a new user
+
     const newUser = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password: hashedPassword
     });
 
     res.status(201).json({
       status: 'success',
       msg: 'Signup successful',
-      user: { _id: newUser._id, name, email }
+      user: {
+        _id: newUser._id,
+        name,
+        email
+      }
     });
   } catch (err) {
-    console.error('Signup error:', err);  // Log the error
-    res.status(500).json({ status: 'error', msg: 'Error signing up', error: err.message });
+    if (err.code === 11000) {
+      return res.status(400).json({
+        status: 'error',
+        msg: 'User already exists'
+      });
+    }
+
+    console.error('Error during signup:', err);
+    res.status(500).json({
+      status: 'error',
+      msg: 'Something went wrong during signup'
+    });
   }
 });
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Validate request body
   if (!email || !password) {
-    return res.status(400).json({ status: 'error', msg: 'Please provide email and password' });
+    return res.status(400).json({
+      status: 'error',
+      msg: 'Please provide email and password'
+    });
   }
 
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ status: 'error', msg: 'User not found' });
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        msg: 'User not found'
+      });
+    }
 
-    // Compare the password with the hashed one in the database
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ status: 'error', msg: 'Invalid password' });
+    if (!isMatch) {
+      return res.status(400).json({
+        status: 'error',
+        msg: 'Invalid password'
+      });
+    }
 
-    // Generate JWT token
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({
@@ -79,8 +110,11 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Login error:', err);  // Log the error
-    res.status(500).json({ status: 'error', msg: 'Error logging in', error: err.message });
+    console.error('Error during login:', err);
+    res.status(500).json({
+      status: 'error',
+      msg: 'Something went wrong during login'
+    });
   }
 });
 
