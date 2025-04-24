@@ -7,6 +7,10 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is not defined in environment variables');
+}
+
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -33,14 +37,6 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        status: 'error',
-        msg: 'User already exists'
-      });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
@@ -59,6 +55,13 @@ router.post('/signup', async (req, res) => {
       }
     });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({
+        status: 'error',
+        msg: 'User already exists'
+      });
+    }
+
     console.error('Error during signup:', err);
     res.status(500).json({
       status: 'error',
