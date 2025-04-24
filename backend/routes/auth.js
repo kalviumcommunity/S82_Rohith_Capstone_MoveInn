@@ -3,17 +3,20 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const JWT_SECRET = 'moveinn_secret_123'; 
-
+const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post('/signup', async (req, res) => {
-  console.log("SIGNUP BODY:", req.body); 
-
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ msg: 'Please provide name, email, and password' });
+  }
+
+  const emailRegex = /\S+@\S+\.\S+/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ msg: 'Invalid email format' });
   }
 
   try {
@@ -21,20 +24,17 @@ router.post('/signup', async (req, res) => {
     if (existingUser) return res.status(400).json({ msg: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    res.status(201).json({ msg: 'Signup successful', user: newUser });
+    res.status(201).json({ msg: 'Signup successful', user: { _id: newUser._id, name, email } });
   } catch (err) {
-    console.error('Signup error:', err);
-    res.status(500).json({ msg: 'Error signing up', error: err.message });
+    res.status(500).json({ msg: 'Error signing up' });
   }
 });
-
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -62,8 +62,7 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ msg: 'Error logging in', error: err.message });
+    res.status(500).json({ msg: 'Error logging in' });
   }
 });
 
