@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignUp'
 import SplashScreen from './pages/splashScreen';
 
+
 function App() {
   return (
     <Router>
