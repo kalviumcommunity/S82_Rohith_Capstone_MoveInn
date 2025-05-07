@@ -17,10 +17,7 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  status: {
-    type: String,
-    default: 'confirmed',
-  }
+  
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
