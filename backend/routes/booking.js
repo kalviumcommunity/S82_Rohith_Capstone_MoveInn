@@ -3,6 +3,17 @@ const router = express.Router();
 const Booking = require('../models/bookingSchema');
 
 
+
+
+
+router.get('/', async (req, res) => {
+  try {
+    const bookings = await Booking.find();
+    res.json(bookings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 router.post('/create', async (req, res) => {
   try {
     const newBooking = new Booking(req.body);
@@ -14,13 +25,5 @@ router.post('/create', async (req, res) => {
 });
 
 
-router.get('/', async (req, res) => {
-  try {
-    const bookings = await Booking.find();
-    res.json(bookings);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 module.exports = router;
