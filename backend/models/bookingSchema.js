@@ -19,12 +19,5 @@ const bookingSchema = new mongoose.Schema({
     default: Date.now,
   },
 
-  
-  isConfirmed: {
-    type: Boolean,
-    default: false, 
-  }
-
-}, { timestamps: true }); 
 
 module.exports = mongoose.model('Booking', bookingSchema);
