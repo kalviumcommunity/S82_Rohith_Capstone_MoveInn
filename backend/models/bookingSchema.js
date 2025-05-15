@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,  
+    ref: 'User',
     required: true,
   },
   busId: {
-    type: String,
+    type: String,    
     required: true,
   },
   seatNumber: {
@@ -17,8 +18,6 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
-//Implemented the relationship 
