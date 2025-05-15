@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaLock, FaBusAlt } from 'react-icons/fa';
+import axios from 'axios';
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,79 +14,135 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await login(form); // Make sure login() is imported from your auth service
-      localStorage.setItem('token', res.token);
-      navigate('/home');
+      const response = await axios.post('http://localhost:5000/api/auth/login', form, {
+        withCredentials: true,
+      });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        navigate('/home');
+      } else {
+        setError("Invalid email or password.");
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      if (err.response && err.response.status === 401) {
+        setError("Invalid email or password.");
+      } else if (err.response && err.response.status === 404) {
+        setError(err.response.data.message || "User not found.");
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 font-sans">
-      <div className="bg-white bg-opacity-10 backdrop-blur-md shadow-2xl border border-white border-opacity-20 p-10 rounded-3xl w-full max-w-md animate-fadeIn text-white">
-        
-        {/* Heading */}
-        <h2 className="text-4xl font-bold text-center mb-8 tracking-wide flex items-center justify-center gap-3">
-          <FaBusAlt className="text-white" />
-          Welcome to MoveInn
-        </h2>
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      width: "100vw",
+      backgroundSize: "100% 100%",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center"
+    }}>
+      <div style={{
+        display: "flex",
+        width: "800px",
+        backgroundColor: "white",
+        borderRadius: "10px",
+        boxShadow: "0px 4px 20px rgba(0,0,0,0.3)",
+        overflow: "hidden"
+      }}>
+        {/* Left Panel */}
+        <div style={{
+          width: "50%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "30px",
+          backgroundImage: "linear-gradient(62deg, #8EC5FC 0%, #e0c3fc 100%)"
+        }}>
+          <h2 style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>Welcome Back!</h2>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          
-          {/* Email Input */}
-          <div className="flex items-center bg-gray-200 rounded-md px-4 py-3">
-            <FaEnvelope className="text-gray-500 mr-3" />
+        {/* Right Panel */}
+        <div style={{
+          width: "50%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "30px",
+          textAlign: "center",
+          backgroundColor: "#f4f4f4"
+        }}>
+          <h3 style={{
+            fontFamily: "Nunito",
+            fontWeight: "bold",
+            fontSize: "1.8rem",
+            backgroundImage: "linear-gradient(62deg, #8EC5FC 0%, #e0c3fc 100%)",
+            WebkitBackgroundClip: "text",
+            color: "transparent"
+          }}>
+            Log in
+          </h3>
+          {error && <p style={{ color: error.includes("successful") ? "green" : "red", fontWeight: "bold" }}>{error}</p>}
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="Email"
-              className="bg-transparent w-full text-gray-700 placeholder-gray-500 focus:outline-none"
+              placeholder="Email ID"
               required
+              style={{
+                padding: "12px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                fontSize: "1rem"
+              }}
             />
-          </div>
-
-          {/* Password Input */}
-          <div className="flex items-center bg-gray-200 rounded-md px-4 py-3">
-            <FaLock className="text-gray-500 mr-3" />
             <input
               type="password"
               name="password"
               value={form.password}
               onChange={handleChange}
-              placeholder="Password"
-              className="bg-transparent w-full text-gray-700 placeholder-gray-500 focus:outline-none"
+              placeholder="Enter Your Password"
               required
+              style={{
+                padding: "12px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                fontSize: "1rem"
+              }}
             />
-          </div>
-
-          {/* Error message */}
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-white bg-opacity-30 hover:bg-opacity-40 transition duration-300 text-white font-bold py-3 text-lg rounded-lg shadow-md"
-          >
-            Login
-          </button>
-        </form>
-
-        {/* Forgot Password */}
-        <div className="mt-6 flex justify-between text-sm text-white text-opacity-80">
-          <a href="/forgot-password" className="hover:underline">
-            Forgot Password?
-          </a>
-        </div>
-
-        {/* Sign-up */}
-        <div className="mt-6 text-center text-white text-opacity-90 text-sm">
-          Don’t have an account?{' '}
-          <a href="/signup" className="text-white underline hover:text-blue-200">
-            Sign up
-          </a>
+            <button
+              type="submit"
+              style={{
+                padding: "12px",
+                borderRadius: "5px",
+                backgroundImage: "linear-gradient(62deg, #8EC5FC 0%, #e0c3fc 100%)",
+                color: "white",
+                fontWeight: "bold",
+                fontSize: "1rem",
+                cursor: "pointer",
+                transition: "0.3s"
+              }}
+              onMouseOver={(e) => e.target.style.opacity = "0.8"}
+              onMouseOut={(e) => e.target.style.opacity = "1"}
+            >
+              Login
+            </button>
+          </form>
+          <p style={{ marginTop: "10px", fontSize: "0.9rem" }}>
+            Don’t have an account?{' '}
+            <span
+              style={{ color: "#007BFF", cursor: "pointer", fontWeight: "bold" }}
+              onClick={() => navigate("/signup")}
+            >
+              Sign up
+            </span>
+          </p>
         </div>
       </div>
     </div>
