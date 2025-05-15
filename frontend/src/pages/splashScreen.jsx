@@ -9,6 +9,7 @@ const SplashScreen = () => {
     const timer = setTimeout(() => {
       const token = localStorage.getItem('token');
       if (token) {
+
         navigate('/login');
       } else {
         navigate('/home');

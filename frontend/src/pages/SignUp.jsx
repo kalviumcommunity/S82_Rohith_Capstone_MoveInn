@@ -19,7 +19,7 @@ const SignupPage = () => {
         withCredentials: true,
       });
       localStorage.setItem('token', res.data.token);
-      navigate('/home');
+      navigate('/login');
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
     }
