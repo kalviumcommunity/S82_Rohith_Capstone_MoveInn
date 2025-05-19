@@ -6,9 +6,13 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const bookingRoutes = require('./routes/booking');
+const rateLimiter = require('./middleware/rateLimiter');
+
+
 
 const app = express();
 const PORT = 5000;
+app.use(rateLimiter);
 
 
 app.use(cors({
