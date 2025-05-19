@@ -70,3 +70,8 @@ Conclusion
 
 MoveInn will provide a seamless and user-friendly experience for travelers, making it easier to plan trips with integrated bus, guide, and hotel booking services.
 
+<!-- Benefit	Example
+Prevent spam	User hits login/signup 1000 times — rate limiter blocks them
+Prevent brute force	Stops password-guessing bots
+Protect server resources	Reduces load during peak times
+Add professionalism	It shows you're handling real-world scenarios in your app -->
