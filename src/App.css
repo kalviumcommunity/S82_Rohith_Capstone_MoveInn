@@ -1,0 +1,108 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background: #f0f4f8; /* Subtle background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Form Container */
+  .form-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  /* Input Fields */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s;
+  }
+  
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    border-color: #1E40AF; /* Blue color for focus */
+    outline: none;
+  }
+  
+  /* Submit Button */
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #096FA6; /* Blue color */
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #096FA6; /* Lighter blue for hover */
+  }
+  
+  /* Links */
+  a {
+    color: #096FA6; /* Blue color for links */
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Forgot Password Link */
+  .forgot-password {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Background Image for Form */
+  .form-container {
+    background-image: url('your-image-path.jpg'); /* Replace with actual background image */
+    background-size: cover;
+    background-position: center;
+    background-blur: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    .form-container {
+      width: 90%;
+      padding: 20px;
+    }
+  
+    h1 {
+      font-size: 20px;
+    }
+  
+    button {
+      font-size: 14px;
+    }
+  }
+  
